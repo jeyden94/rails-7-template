@@ -1,0 +1,11 @@
+<div id="game-lobby">
+  <h3>Game Lobby</h3>
+  <ul>
+    <% game.players.each do |player| %>
+      <li><%= player.player_name %> <% if player.is_bot %> <em>(Bot)</em> <% else %> <em>(Human)</em> <% end %></li>
+    <% end %>
+  </ul>
+  <p><strong>Number of Human Players:</strong> <%= game.players.where(is_bot: false).count %></p>
+  <p><strong>Number of Bots:</strong> <%= game.players.where(is_bot: true).count %></p>
+  <p><strong>Available Slots for Human Players:</strong> <%= game.max_players - game.players.count %></p>
+</div>

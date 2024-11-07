@@ -1,5 +1,9 @@
 <h2>Game Session Details</h2>
 
+<div id="game-id" data-game-id="<%= @game.id %>"></div>
+<%= render partial: 'lobby', locals: { game: @game } %>
+
+
 <p><strong>Game Key:</strong> <%= @game.game_password %></p>
 <p><strong>Game Status:</strong> <%= @game.game_status.humanize %></p>
 <p><strong>Total Number of Players:</strong> <%= @game.max_players %></p>

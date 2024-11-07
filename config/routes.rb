@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   
   get("/join", { :controller => "game", :action => "join" })
   
+  post("/join", { :controller => "game", :action => "join" })
 
   # get "/your_first_screen" => "pages#first"
   
