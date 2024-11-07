@@ -1,1 +1,41 @@
-<h1>howdy</h1>
+<h3>Create a game</h3>
+
+<!--<hr>
+
+<form action="/new_game" method="post">
+  <div>
+    <label for="password_box">
+      Game Password
+    </label>
+
+    <input type="text" id="password_box" name="query_password">
+  </div>
+
+  <div>
+  <a href="/launch">
+      <button>Launch game</button>
+  </a>
+</div>
+  
+<hr>
+
+<h3>Create a Game</h3>
+
+<hr>-->
+
+<%= form_with url: games_path, method: :post, local: true do %>
+  <div>
+    <label for="password_box">Game Password</label>
+    <%= text_field_tag :query_password, nil, id: 'password_box' %>
+  </div>
+
+  <div>
+    <%= submit_tag 'Launch Game' %>
+  </div>
+<% end %>
+
+<hr>
+
+<% if flash[:alert] %>
+  <div class="alert"><%= flash[:alert] %></div>
+<% end %>
