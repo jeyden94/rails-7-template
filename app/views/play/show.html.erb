@@ -1,1 +1,44 @@
-<h1>howdy</h1>
+<h2>Game Session Details</h2>
+
+<p><strong>Game Key:</strong> <%= @game.game_password %></p>
+<p><strong>Game Status:</strong> <%= @game.game_status.humanize %></p>
+<p><strong>Total Number of Players:</strong> <%= @game.max_players %></p>
+
+<h3>Current Players</h3>
+<ul>
+  <% @game.players.each do |player| %>
+    <li>
+      <%= player.player_name %>
+      <% if player.is_bot %>
+        <em>(Bot)</em>
+      <% else %>
+        <em>(Human)</em>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<p><strong>Number of Bots:</strong> <%= @game.players.where(is_bot: true).count %></p>
+<p><strong>Number of Human Players:</strong> <%= @game.players.where(is_bot: false).count %></p>
+<p><strong>Available Slots for Human Players:</strong> <%= @game.max_players - @game.players.count %></p>
+
+<hr>
+
+<p>Share the game key with friends to allow them to join this game.</p>
+
+<% if flash[:notice] %>
+  <div class="notice"><%= flash[:notice] %></div>
+<% end %>
+
+<% if flash[:alert] %>
+  <div class="alert"><%= flash[:alert] %></div>
+<% end %>
+
+
+<p>Test Notes:</p>
+<ul>
+  <li>Ensure the number of bots matches what was set during game creation.</li>
+  <li>Verify that the total number of players does not exceed the maximum allowed.</li>
+  <li>Check that the number of human players reflects the number of users who joined.</li>
+  <li>Confirm the game status updates correctly as the game progresses.</li>
+</ul>

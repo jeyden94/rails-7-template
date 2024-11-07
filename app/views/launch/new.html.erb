@@ -1,8 +1,15 @@
-<h3>Create a game</h3>
 
 <!--<hr>
 
 <form action="/new_game" method="post">
+  <div>
+    <label for="password_box">
+      Game Password
+    </label>
+
+    <input type="text" id="password_box" name="query_password">
+  </div>
+
   <div>
     <label for="password_box">
       Game Password
@@ -23,10 +30,25 @@
 
 <hr>-->
 
+<h3>Create a Game</h3>
+
 <%= form_with url: games_path, method: :post, local: true do %>
   <div>
-    <label for="password_box">Game Password</label>
-    <%= text_field_tag :query_password, nil, id: 'password_box' %>
+    <label for="player_count">How many players?</label>
+    <select id="player_count" name="query_player_count">
+      <% (2..5).each do |count| %>
+        <option value="<%= count %>"><%= count %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <div>
+    <label for="bot_count">How many bots?</label>
+    <select id="bot_count" name="query_bot_count">
+      <% (0..4).each do |count| %>
+        <option value="<%= count %>"><%= count %></option>
+      <% end %>
+    </select>
   </div>
 
   <div>

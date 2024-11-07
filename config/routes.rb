@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get("/", { :controller => "game", :action => "homepage" })
   
   get("/join", { :controller => "game", :action => "join" })
+  
 
   # get "/your_first_screen" => "pages#first"
   

@@ -1,61 +1,86 @@
-class GamesController < ApplicationController
-  
-  #------------------------------
-  # Actions to open the app and launch into a new or existing game
+class GameController < ApplicationController
 
-  def homepage
-    render({ :template => "layouts/homepage"})
-  end
+#------------------------------
+# Actions to open the app and launch into a new or existing game
 
-  def join
-    render({ :template => "launch/join"})
-  end
+def homepage
+  render({ :template => "layouts/homepage"})
+end
 
-  def new
-    render({ :template => "launch/new"})
-  end
+def join
+  render({ :template => "launch/join"})
+end
 
-  #------------------------------
-  # Actions to create or join games
+def new
+  render({ :template => "launch/new"})
+end
 
-  def create
-    @game = Game.new(game_password: params[:query_password], game_status: 0) # Initial status is 'pending'
-    if @game.save
-      redirect_to @game, notice: 'Game created successfully. Share the password to invite others!'
-    else
-      flash.now[:alert] = 'Failed to create the game. Please try again.'
-      render :new
+#------------------------------
+# Actions to create or join games
+
+def create
+  @game = Game.new(
+    game_status: 0, # Initial status is 'pending'
+    max_players: params[:query_player_count].to_i
+  )
+
+  if @game.save
+    params[:query_bot_count].to_i.times do |i|
+      @game.players.create(player_name: "Bot #{i + 1}", is_bot: true)
     end
+
+    available_slots = @game.max_players - @game.players.count
+    redirect_to @game, notice: "Game created successfully. Share this key: #{@game.game_password}. There are #{available_slots} open slots for human players."
+  else
+    flash.now[:alert] = 'Failed to create the game. Please try again.'
+    render :new
   end
-  
-  def show
-    @game = Game.find(params[:id])
-    # Logic to display the game and its current players
-    render({ :template => "play/show"})
-  end
+end
 
-  def join
-    @game_password = params[:query_password]
+def show
+  @game = Game.find(params[:id])
+  # Logic to display the game and its current players
+  render({ :template => "play/show"})
+end
 
-    if @game_password.present?
-      @game = Game.find_by(game_password: @game_password)
+def join
+  @game_key = params[:query_key] # Replace with the input parameter name for the key
 
-      if @game
-        if @game.players.count < 3
-          @player = @game.players.create(player_name: "Player #{(@game.players.count + 1)}") # Replace with actual player input if available
-          redirect_to @game, notice: 'You have successfully joined the game!'
-        else
-          flash.now[:alert] = 'This game already has the maximum number of players.'
-          render :join
-        end
+  if @game_key.present?
+    @game = Game.find_by(game_password: @game_key)
+
+    if @game
+      current_human_players = @game.players.where(is_bot: false).count
+      available_human_slots = @game.max_players - @game.players.count
+
+      if current_human_players < available_human_slots
+        @player = @game.players.create(player_name: "Player #{current_human_players + 1}")
+        session[:player_id] = @player.id
+        session[:game_id] = @game.id
+        redirect_to @game, notice: 'You have successfully joined the game!'
       else
-        flash.now[:alert] = 'Invalid game password. Please try again.'
-        render :join
+        flash.now[:alert] = 'This game has reached its player limit for human players.'
+          render({ :template => "launch/join"})
       end
     else
-      render :join
+      flash.now[:alert] = 'Invalid game key. Please try again.'
+        render({ :template => "launch/join"})
     end
+  else
+      render({ :template => "launch/join"})
   end
+end
+
+
+#------------------------------
+# Action to add bots if there are less than 5 players
+
+def add_bots(game)
+  while game.players.count < game.max_players
+    game.players.create(player_name: "Bot #{game.players.count + 1}", is_bot: true)
+  end
+end
+
+
 
 end
-  
